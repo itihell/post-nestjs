@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { User } from 'src/common/decorators';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { User, Auth } from 'src/common/decorators';
 import { User as UserEntity } from 'src/user/entities';
-
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -19,9 +19,19 @@ export class AuthController {
       data: data,
     };
   }
-  @UseGuards(JwtAuthGuard)
+  @Auth()
   @Get('profile')
-  profile() {
-    return { message: 'estos son tus datos' };
+  profile(@User() user: UserEntity) {
+    return { message: 'Ok', user };
+  }
+
+  @Auth()
+  @Get('refresh')
+  refreshToken(@User() user: UserEntity) {
+    const data = this.authService.login(user);
+    return {
+      message: 'Refresh exitoso',
+      data,
+    };
   }
 }
