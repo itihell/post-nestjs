@@ -11,35 +11,64 @@ import {
 import { CreateUserDto } from './dto';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
   async getMany() {
-    return await this.userService.getMany();
+    const users = await this.userService.getMany();
+    const data = {
+      data: users,
+      message: 'Ok',
+    };
+    return data;
   }
 
-  @Get('id')
+  @Get(':id')
   async getOne(@Param('id', ParseIntPipe) id: number) {
-    return await this.userService.getOne(id);
+    const user = await this.userService.getOne(id);
+    const data = {
+      data: user,
+      message: 'Ok',
+    };
+
+    return data;
   }
 
   @Post()
   async createOne(@Body() dto: CreateUserDto) {
-    return await this.userService.createOne(dto);
+    const user = await this.userService.createOne(dto);
+    const data = {
+      data: user,
+      message: 'Registro agregado con éxito',
+    };
+    return data;
   }
 
-  @Put('id')
+  @Put(':id')
   async UpdateOne(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateUserDto,
   ) {
-    return await this.userService.updatedOne(id, dto);
+    const user = await this.userService.updatedOne(id, dto);
+    const data = {
+      data: user,
+      message: 'Registro actualizado con éxito',
+    };
+
+    return data;
   }
 
-  @Delete('id')
+  @Delete(':id')
   async deleteOne(@Param('id', ParseIntPipe) id: number) {
-    return await this.userService.deleteOne(id);
+    const user = await this.userService.deleteOne(id);
+    const data = {
+      data: user,
+      message: 'Registro eliminado con éxito',
+    };
+
+    return data;
   }
 }

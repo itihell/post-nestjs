@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities';
@@ -21,17 +25,26 @@ export class UserService {
   }
 
   async createOne(dto: CreateUserDto) {
+    await this.validarEmail(dto);
     const user = this.userRepository.create(dto);
     return await this.userRepository.save(user);
   }
   async updatedOne(id: number, dto: UpdateUserDto) {
-    const post = await this.userRepository.findOne(id);
-    const editedPost = Object.assign(post, dto);
-    return await this.userRepository.save(editedPost);
+    const user = await this.userRepository.findOne(id);
+    if (!user) throw new NotFoundException('No se encontro el registro');
+    const newUser = Object.assign(user, dto);
+    return await this.userRepository.save(newUser);
   }
 
   async deleteOne(id: number) {
-    const post = await this.userRepository.findOne(id);
-    return await this.userRepository.remove(post);
+    const user = await this.userRepository.findOne(id);
+    if (!user) throw new NotFoundException('No se encontro el registro');
+    return await this.userRepository.remove(user);
+  }
+
+  async validarEmail(dto: CreateUserDto) {
+    const user = await this.userRepository.find({ email: dto.email });
+    if (user.length > 0)
+      throw new BadRequestException('El email ya esta en uso');
   }
 }
