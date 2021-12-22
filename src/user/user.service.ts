@@ -19,8 +19,7 @@ export class UserService {
     return await this.userRepository.find();
   }
   async getOne(id: number) {
-    const user = await this.userRepository.findOne(id);
-    if (!user) throw new NotFoundException('No se encontro el registro');
+    const user = await this.validateExistUser(id);
     return user;
   }
 
@@ -37,8 +36,7 @@ export class UserService {
   }
 
   async deleteOne(id: number) {
-    const user = await this.userRepository.findOne(id);
-    if (!user) throw new NotFoundException('No se encontro el registro');
+    const user = await this.validateExistUser(id);
     return await this.userRepository.remove(user);
   }
 
@@ -46,5 +44,10 @@ export class UserService {
     const user = await this.userRepository.find({ email: dto.email });
     if (user.length > 0)
       throw new BadRequestException('El email ya esta en uso');
+  }
+  async validateExistUser(id: number) {
+    const user = await this.userRepository.findOne(id);
+    if (!user) throw new NotFoundException('No se encontro el registro');
+    return user;
   }
 }
