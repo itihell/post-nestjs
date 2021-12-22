@@ -50,4 +50,12 @@ export class UserService {
     if (!user) throw new NotFoundException('No se encontro el registro');
     return user;
   }
+
+  async findEmail(email: string) {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where({ email: email })
+      .addSelect('user.password')
+      .getOne();
+  }
 }
