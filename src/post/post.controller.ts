@@ -8,30 +8,40 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreatePostDto, UpdatePostDto } from './dto';
 import { PostService } from './post.service';
 
+@ApiTags('Post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
   @Get()
-  getMany() {
-    return this.postService.getMany();
+  async getMany() {
+    const rows = await this.postService.getMany();
+    const data = {
+      data: rows,
+      message: 'Ok',
+    };
+    return data;
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    return this.postService.getOne(id);
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.postService.getOne(id);
   }
 
   @Post()
-  createOne(@Body() dto: CreatePostDto) {
-    return this.postService.createOne(dto);
+  async createOne(@Body() dto: CreatePostDto) {
+    return await this.postService.createOne(dto);
   }
 
   @Put(':id')
-  updateOne(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePostDto) {
-    return this.postService.updateOne(id, dto);
+  async updateOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdatePostDto,
+  ) {
+    return await this.postService.updateOne(id, dto);
   }
 
   @Delete(':id')

@@ -1,23 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post } from './entities/post.entity';
 
 @Injectable()
 export class PostService {
-  getMany() {
-    return { ok: 'Listo getMany' };
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) {}
+  async getMany() {
+    return await this.postRepository.find();
   }
 
-  createOne(dto: CreatePostDto) {
-    return { ok: 'Listo createOne' };
+  async createOne(dto: CreatePostDto) {
+    const post = this.postRepository.create({ ...dto });
+    return await this.postRepository.save(post);
   }
-  getOne(id: number) {
-    return { ok: 'Listo getOne' };
+  async getOne(id: number) {
+    return await this.postRepository.findOne(id);
   }
-  updateOne(id: number, dto: UpdatePostDto) {
-    return { ok: 'Listo editOne' };
+
+  async updateOne(id: number, dto: UpdatePostDto) {
+    const post = await this.postRepository.findOne(id);
+    const editedPost = Object.assign(post, dto);
+    return await this.postRepository.save(editedPost);
   }
-  deleteOne(id: number) {
-    return { ok: 'Listo deleteOne' };
+  async deleteOne(id: number) {
+    const post = await this.postRepository.findOne(id);
+    return await this.postRepository.remove(post);
   }
 }
