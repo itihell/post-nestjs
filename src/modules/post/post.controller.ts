@@ -9,6 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/common/decorators';
 import { CreatePostDto, UpdatePostDto } from './dto';
 import { PostService } from './post.service';
 
@@ -31,11 +32,12 @@ export class PostController {
     return await this.postService.getOne(id);
   }
 
+  @Auth()
   @Post()
   async createOne(@Body() dto: CreatePostDto) {
     return await this.postService.createOne(dto);
   }
-
+  @Auth()
   @Put(':id')
   async updateOne(
     @Param('id', ParseIntPipe) id: number,
@@ -43,7 +45,7 @@ export class PostController {
   ) {
     return await this.postService.updateOne(id, dto);
   }
-
+  @Auth()
   @Delete(':id')
   deleteOne(@Param('id', ParseIntPipe) id: number) {
     return this.postService.deleteOne(id);
