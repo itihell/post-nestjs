@@ -12,14 +12,15 @@ export class PostService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
   ) {}
-  async getMany() {
+  async getMany(): Promise<Post[]> {
     return await this.postRepository.find();
   }
 
-  async createOne(dto: CreatePostDto) {
+  async createOne(dto: CreatePostDto): Promise<Post> {
     const post = this.postRepository.create({ ...dto });
     return await this.postRepository.save(post);
   }
+
   async getOne(id: number) {
     const post = await this.postRepository.findOne(id);
     existFindOne(post);
@@ -33,6 +34,7 @@ export class PostService {
   }
   async deleteOne(id: number) {
     const post = await this.postRepository.findOne(id);
+    existFindOne(post);
     return await this.postRepository.remove(post);
   }
 }
