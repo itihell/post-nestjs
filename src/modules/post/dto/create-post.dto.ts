@@ -6,33 +6,33 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { EnumToString } from 'src/common/helpers/enumToString';
+import { EnumToString } from 'src/helpers/enumToString';
 import { PostCategory } from '../enums';
 
 export class CreatePostDto {
   @IsString()
-  title: string;
+  readonly title: string;
 
   @IsString()
-  slug: string;
+  readonly slug: string;
 
   @IsString()
-  excerpt: string;
+  readonly excerpt: string;
 
   @IsString()
-  content: string;
+  readonly content: string;
 
   @IsNotEmpty()
   @IsEnum(PostCategory, {
     message: `Invalid option. Valids options are ${EnumToString(PostCategory)}`,
   })
-  category: string;
+  readonly category: string;
 
   @IsString({ each: true })
   @IsArray()
-  tags: string[];
+  readonly tags: string[];
 
   @IsOptional()
   @IsBoolean()
-  status: boolean;
+  readonly status: boolean;
 }

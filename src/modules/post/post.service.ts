@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
+import { existFindOne } from '../../helpers';
 
 @Injectable()
 export class PostService {
@@ -20,7 +21,9 @@ export class PostService {
     return await this.postRepository.save(post);
   }
   async getOne(id: number) {
-    return await this.postRepository.findOne(id);
+    const post = await this.postRepository.findOne(id);
+    existFindOne(post);
+    return post;
   }
 
   async updateOne(id: number, dto: UpdatePostDto) {
